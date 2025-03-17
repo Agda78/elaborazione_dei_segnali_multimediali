@@ -6,3 +6,14 @@ Tale repository contiene tutti i codici che vengono prodotti all'interno del cor
 
 ## Librerie da installare
 La seguente repo è sviluppata in linguaggio python. Le librerie richieste per lo svolgimento degli esercizi sono le seguenti:
+- scikit-image
+- scikit-learn
+- matplotlib
+- opencv-python
+- pandas
+- tqdm
+
+Puoi installarle utilizzando pip:
+
+```bash
+pip install scikit-image scikit-learn matplotlib opencv-python pandas tqdm
