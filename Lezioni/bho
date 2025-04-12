@@ -1,33 +1,48 @@
 # Nome del file principale senza estensione
 MAIN = main
 
-# Comando LaTeX da usare
+# Comandi LaTeX e BibTeX
 LATEX = pdflatex
 BIBTEX = bibtex
 
-# Flags
+# Opzioni LaTeX
 LATEX_OPTS = -interaction=nonstopmode -halt-on-error
 
 # Target di default
 all: pdf
 
+# Compila il PDF, gestendo bibtex e riferimenti
 pdf:
-	$(LATEX) $(LATEX_OPTS) $(MAIN).tex
-	@if grep -q 'Citation' $(MAIN).log; then \
+	@echo "==> Prima compilazione LaTeX"
+	@$(LATEX) $(LATEX_OPTS) $(MAIN).tex
+
+	@if grep -q "Citation" $(MAIN).log; then \
+		echo "==> BibTeX necessario. Eseguo bibtex..."; \
 		$(BIBTEX) $(MAIN); \
+		echo "==> Ricompilazione dopo bibtex..."; \
 		$(LATEX) $(LATEX_OPTS) $(MAIN).tex; \
 		$(LATEX) $(LATEX_OPTS) $(MAIN).tex; \
-	elif grep -q 'Rerun to get cross-references right' $(MAIN).log; then \
+	elif grep -q "Rerun to get cross-references right" $(MAIN).log; then \
+		echo "==> Riferimenti incrociati non aggiornati. Ricompilo..."; \
 		$(LATEX) $(LATEX_OPTS) $(MAIN).tex; \
 	fi
 
 # Pulisce tutti i file temporanei
 clean:
-	rm -f *.aux *.log *.out *.toc *.bbl *.blg *.lof *.lot *.fls *.fdb_latexmk *.synctex.gz
+	@echo "==> Pulizia file temporanei..."
+	@rm -f *.aux *.log *.out *.toc *.bbl *.blg *.lof *.lot *.fls *.fdb_latexmk *.synctex.gz
 
 # Rimuove anche il PDF finale
 cleanall: clean
-	rm -f $(MAIN).pdf
+	@echo "==> Rimozione PDF finale..."
+	@rm -f $(MAIN).pdf
 
-# Per chi usa Windows: usa del come commento
-.PHONY: all pdf clean cleanall
+# Apre il PDF (Linux/macOS/Windows)
+view: pdf
+ifeq ($(OS),Windows_NT)
+	start $(MAIN).pdf
+else
+	xdg-open $(MAIN).pdf || open $(MAIN).pdf
+endif
+
+.PHONY: all pdf clean cleanall view
