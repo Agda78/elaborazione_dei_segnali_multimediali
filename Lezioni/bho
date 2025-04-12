@@ -1,0 +1,33 @@
+# Nome del file principale senza estensione
+MAIN = main
+
+# Comando LaTeX da usare
+LATEX = pdflatex
+BIBTEX = bibtex
+
+# Flags
+LATEX_OPTS = -interaction=nonstopmode -halt-on-error
+
+# Target di default
+all: pdf
+
+pdf:
+	$(LATEX) $(LATEX_OPTS) $(MAIN).tex
+	@if grep -q 'Citation' $(MAIN).log; then \
+		$(BIBTEX) $(MAIN); \
+		$(LATEX) $(LATEX_OPTS) $(MAIN).tex; \
+		$(LATEX) $(LATEX_OPTS) $(MAIN).tex; \
+	elif grep -q 'Rerun to get cross-references right' $(MAIN).log; then \
+		$(LATEX) $(LATEX_OPTS) $(MAIN).tex; \
+	fi
+
+# Pulisce tutti i file temporanei
+clean:
+	rm -f *.aux *.log *.out *.toc *.bbl *.blg *.lof *.lot *.fls *.fdb_latexmk *.synctex.gz
+
+# Rimuove anche il PDF finale
+cleanall: clean
+	rm -f $(MAIN).pdf
+
+# Per chi usa Windows: usa del come commento
+.PHONY: all pdf clean cleanall
