@@ -61,3 +61,4 @@ if __name__=="__main__":
     plt.plot(B_list, psnr_list)
 
     plt.show()
+
